@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Guidance Booking Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css')}}">
+    <script src="{{ url_for('static', filename='js/dashboard.js')}}" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Admin Panel</h2>
+            <ul>
+                <li><a href="#" class="active">Dashboard</a></li>
+                <li><a href="#" id="addCounselorBtn">Add Counselor</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            <header>
+                <h1>Admin Dashboard</h1>
+            </header>
+            <main>
+                <h2>Career Guidance Booking Dashboard</h2>
+                <section class="user-list">
+                    <table id="appointment-table">
+                        <thead>
+                            <tr>
+                                <th>User Name</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                                <th>Uploaded PDF</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table body will be generated dynamically using JavaScript -->
+                        </tbody>
+                    </table>
+                </section>
+            </main>
+        </div>
+        <form id="counselor-form" enctype="multipart/form-data">
+            <!-- Counselor form fields -->
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br>
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" required><br>
+            <label for="about">About:</label>
+            <textarea id="about" name="about" rows="4" cols="50" required></textarea><br>
+            <label for="education">Education Qualification:</label>
+            <input type="text" id="education" name="education" required><br>
+            <label for="experience">Experience:</label>
+            <input type="text" id="experience" name="experience" required><br>
+          
+           <!-- Photo upload section -->
+<div class="photo-upload-section">
+    <label for="photo">Upload Photo:</label>
+    <div class="file-upload-wrapper">
+        <input type="file" id="photo" name="photo" required>
+        <img id="photo-preview" src="#" >
+    </div>
+</div>
+
+            <button type="submit">Add</button>
+        </form>
+        
+        
+    </div>
+    <footer>
+        <p>&copy; 2024 Career Guidance Booking System</p>
+    </footer>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
+        import { getFirestore,collection, setDoc, getDocs,addDoc,doc} from "https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore.js"; 
+        import { getStorage, ref, uploadBytes,getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-storage.js";
+
+        const firebaseConfig = {
+          //  Add your configuration from Firebase
+        };
+       
+        // Initialize Firebase
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        const querySnapshot = await getDocs(collection(db, "appointments"));
+        const tableBody = document.querySelector('#appointment-table tbody');
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const row = document.createElement('tr');
+
+            // Create table cells for each field
+            const nameCell = document.createElement('td');
+            nameCell.textContent = data.Firstname + data.Lastname; // Replace 'name' with your actual field name
+            row.appendChild(nameCell);
+
+            const phoneNumberCell = document.createElement('td');
+            phoneNumberCell.textContent = data.mob; // Replace 'phoneNumber' with your actual field name
+            row.appendChild(phoneNumberCell);
+
+            const detailsCell = document.createElement('td');
+            detailsCell.textContent = data.email; // Replace 'guidanceDetails' with your actual field name
+            row.appendChild(detailsCell);
+
+            const pdfCell = document.createElement('td');
+            const pdfLink = document.createElement('a');
+            pdfLink.href = data.pdfUrl; // Replace 'pdfUrl' with your actual field name
+            pdfLink.textContent = 'View PDF';
+            pdfLink.target = '_blank';
+            pdfCell.appendChild(pdfLink);
+            row.appendChild(pdfCell);
+
+            // const actionsCell = document.createElement('td');
+            // const acceptButton = document.createElement('button');
+            // acceptButton.textContent = 'Accept';
+            // acceptButton.classList.add('accept');
+            // // Add event listener or functionality for the accept button if needed
+            // actionsCell.appendChild(acceptButton);
+
+            // const rejectButton = document.createElement('button');
+            // rejectButton.textContent = 'Reject';
+            // rejectButton.classList.add('reject');
+            // // Add event listener or functionality for the reject button if needed
+            // actionsCell.appendChild(rejectButton);
+
+            // row.appendChild(actionsCell);
+
+            // Append the row to the table body
+            tableBody.appendChild(row);
+        });
+        const fileInput = document.getElementById('photo');
+const imagePreview = document.getElementById('photo-preview');
+
+fileInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        imagePreview.src = '#'; // Reset the image preview if no file is selected
+    }
+});
+
+        let imageurl;
+        document.getElementById('counselor-form').addEventListener('submit', async(e) => {
+      e.preventDefault();
+            const name=document.getElementById("name").value;
+const about=document.getElementById("about").value;
+const email=document.getElementById("email").value;
+const education=document.getElementById("education").value;
+const experience = document.getElementById("experience").value;
+const image = document.getElementById("photo").files[0];
+
+ imageurl = await uploadImage(image);
+
+// After importing necessary Firebase modules
+
+    
+    // if (image) {
+    //     const imageUrl = await uploadImage(image);
+    //     // document.getElementById('photo-preview').src = imageUrl;
+    // }
+storedData({
+        name: name,
+        about: about,
+        email: email,
+        education: education,
+        experience: experience,
+        imageurl:imageurl
+       
+
+      });
+       
+       
+    });  
+      async function storedData(data){
+
+const name=data.name;
+const about=data.about;
+const email=data.email;
+const education=data.education;
+const experience=data.experience;
+const imageurl=data.imageurl;
+        // Initialize Cloud Firestore and get a reference to the service
+        const db = getFirestore(app);
+        const docRef = await addDoc(collection(db, "counsellors"), {
+  Firstname: name,
+  About: about,
+  email:email,
+  Education:education,
+  Experience:experience,
+  imageurl:imageurl
+  
+});
+console.log("Document written with ID: ", docRef.id);
+alert("User added")
+
+}
+async function uploadImage(imageFile) {
+    try {
+        const storageRef = ref(storage, "images/" + imageFile.name);
+        const uploadTask = await uploadBytes(storageRef, imageFile);
+        const imageUrl = await getDownloadURL(uploadTask.ref);
+        return imageUrl;
+    } catch (error) {
+        console.error("Error uploading image: ", error);
+    }
+}
+// async function uploadPdf(pdfFile) {
+//       try {
+//         const storageRef = ref(storage, "image/" + pdfFile.name);
+//         const uploadTask = await uploadBytes(storageRef, pdfFile);
+//         const url = await getDownloadURL(uploadTask.ref);
+//         return url;
+//       } catch (error) {
+//         console.error("Error uploading PDF: ", error);
+//       }
+//     }
+    </script>
+</body>
+</html>
