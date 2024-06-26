@@ -50,15 +50,35 @@ This career guidance chatbot, built using the Gemini API, utilizes Firebase as t
    
    `API_KEY=REPLACE_WITH_YOUR_API_KEY_HERE`
    
-4. **Set up Firebase :**
+4. **Set up Firebase:**
 
-   Goto firebase website create an account and create a project then you can able to receive a configuration Key and paste the key in `app.html`,`appointment.html`,`dashboard.html`,`demo.html`,`entry.html`,`login.html`,
-   `manage-appointment.html`,`proof.html`,`results.html`,`tenth.html`,`twelth.html` files in the templates folder.
-    ```bash
+   Obtain your Firebase configuration key and paste it into the following files in the `templates` folder:
+   - `app.html`
+   - `appointment.html`
+   - `dashboard.html`
+   - `demo.html`
+   - `entry.html`
+   - `login.html`
+   - `manage-appointment.html`
+   - `proof.html`
+   - `results.html`
+   - `tenth.html`
+   - `twelth.html`
+
+   Example setup in your HTML files:
+
+   ```javascript
+   // Add your Firebase configuration here
    const firebaseConfig = {
-   Add your configuration from Firebase };
+     apiKey: "YOUR_API_KEY",
+     authDomain: "YOUR_AUTH_DOMAIN",
+     projectId: "YOUR_PROJECT_ID",
+     storageBucket: "YOUR_STORAGE_BUCKET",
+     messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+     appId: "YOUR_APP_ID"
+   };
 
-5. **Run Chat:**
+6. **Run Chat:**
 
 To start the chatbot application:
 
