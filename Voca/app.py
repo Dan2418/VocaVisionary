@@ -8,7 +8,7 @@ from flask import Flask, render_template, request, jsonify, url_for, redirect, s
 import google.generativeai as genai
 app = Flask(__name__)
 # Add Your API Key from http://makersuite.google.com
-genai.configure(api_key="Your API Key")
+genai.configure(api_key="REPLACE_WITH_YOUR_API_KEY_HERE")
 
 # Set up the model
 generation_config = {
