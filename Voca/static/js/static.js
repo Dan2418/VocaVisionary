@@ -126,12 +126,15 @@ function appendMessage(message, sender) {
         newMessage.className = 'user-message';
     } else {
         newMessage.className = 'bot-message';
+        var formattedResponse = message
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)/g, '<br>→ $1')
+            .replace(/(\d+\.)(.*?)/g, '<br>$1 $2');
+        newMessage.innerHTML = formattedResponse;
     }
-    var formattedResponse = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-    // Convert *text* to arrow symbol (→ text)
-    formattedResponse = formattedResponse.replace(/\*(.*?)/g, '<br>→ $1');
-    newMessage.innerHTML = formattedResponse;
+    if (sender === 'user') {
+        newMessage.innerText = message; // Set user message text without formatting
+    }
 
     newMessageContainer.appendChild(newMessage);
     chatBox.appendChild(newMessageContainer);
